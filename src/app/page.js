@@ -37,7 +37,7 @@ export default function RandomUserPage() {
   useEffect(() => {
     const strAmong = localStorage.getItem("genAmong");
     if (strAmong === null) {
-      setGenAmount([]);
+      setGenAmount(1);
       return;
     }
     const loadedAmong = JSON.parse(strAmong);
