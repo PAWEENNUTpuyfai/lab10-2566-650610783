@@ -1,13 +1,16 @@
 "use client";
 
+import { UserCard } from "@/components/UserCard";
+import { cleanUser } from "@/libs/cleanUser";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function RandomUserPage() {
   //user = null or array of object
   const [users, setUsers] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [genAmount, setGenAmount] = useState(1);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const generateBtnOnClick = async () => {
     setIsLoading(true);
@@ -16,10 +19,30 @@ export default function RandomUserPage() {
     );
     setIsLoading(false);
     const users = resp.data.results;
+    const cleanedUsers = users.map((u) => cleanUser(u));
+    setUsers(cleanedUsers);
     //Your code here
     //Process result from api response with map function. Tips use function from /src/libs/cleanUser
     //Then update state with function : setUsers(...)
   };
+  useEffect(() => {
+    if (isFirstLoad) {
+      setIsFirstLoad(false);
+      return;
+    }
+    const strAmong = JSON.stringify(genAmount);
+    localStorage.setItem("genAmong", strAmong);
+  }, [genAmount]);
+
+  useEffect(() => {
+    const strAmong = localStorage.getItem("genAmong");
+    if (strAmong === null) {
+      setGenAmount([]);
+      return;
+    }
+    const loadedAmong = JSON.parse(strAmong);
+    setGenAmount(loadedAmong);
+  });
 
   return (
     <div style={{ maxWidth: "700px" }} className="mx-auto">
@@ -40,7 +63,17 @@ export default function RandomUserPage() {
       {isLoading && (
         <p className="display-6 text-center fst-italic my-4">Loading ...</p>
       )}
-      {users && !isLoading && users.map(/*code map rendering UserCard here */)}
+      {users &&
+        !isLoading &&
+        users.map((u) => (
+          <UserCard
+            name={u.name}
+            imgUrl={u.imgUrl}
+            address={u.address}
+            email={u.email}
+            key={u.email}
+          />
+        ))}
     </div>
   );
 }
