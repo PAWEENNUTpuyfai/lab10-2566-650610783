@@ -21,9 +21,6 @@ export default function RandomUserPage() {
     const users = resp.data.results;
     const cleanedUsers = users.map((u) => cleanUser(u));
     setUsers(cleanedUsers);
-    //Your code here
-    //Process result from api response with map function. Tips use function from /src/libs/cleanUser
-    //Then update state with function : setUsers(...)
   };
   useEffect(() => {
     if (isFirstLoad) {
@@ -36,7 +33,7 @@ export default function RandomUserPage() {
 
   useEffect(() => {
     const strAmong = localStorage.getItem("genAmong");
-    if (strAmong === null) {
+    if (strAmong == null) {
       setGenAmount(1);
       return;
     }
